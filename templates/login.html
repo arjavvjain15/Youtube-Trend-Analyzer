@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Trending Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CORRECTED LINK -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-page-body">
+    <div class="background-shapes">
+        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
+        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
+        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
+        <div class="shape-light"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="theme-switcher">
+            <input type="checkbox" id="theme-toggle">
+            <label for="theme-toggle"></label>
+        </div>
+        <h2>Trending Analyzer Login</h2>
+        <form method="POST">
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Login</button>
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </form>
+        <p class="footer-text">Developed by IIITDMJ</p>
+    </div>
+
+<script>
+    // JavaScript remains the same
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-theme');
+                themeToggle.checked = false;
+            }
+        };
+
+        const currentTheme = localStorage.getItem('theme');
+        applyTheme(currentTheme);
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

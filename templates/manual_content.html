@@ -1,0 +1,78 @@
+<div class="content-card">
+    <h1>Manual Trending Predictor</h1>
+    <p class="subtitle">Enter video statistics to predict its trending score</p>
+
+    <div class="fetch-section">
+        <form method="POST" id="fetch-form">
+            <label for="video_link">Enter YouTube Video Link to Auto-Fill Form:</label>
+            <input type="text" id="video_link" name="video_link" placeholder="e.g., https://www.youtube.com/watch?v=...">
+            <button type="submit" name="action" value="fetch_data">Fetch Video Data</button>
+        </form>
+    </div>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+    <form method="POST" id="predict-form">
+        <div class="form-grid">
+            <div class="input-group">
+                <h3 class="group-title">Current Video Stats</h3>
+                <label for="current_views">Current Views:</label>
+                <input type="number" step="any" id="current_views" name="current_views" value="{{ video_data.current_views or '' }}" required>
+                <br><br>
+                <label for="current_likes">Current Likes:</label>
+                <input type="number" step="any" id="current_likes" name="current_likes" value="{{ video_data.current_likes or '' }}" required>
+                <br><br>
+                <label for="current_comments">Current Comments:</label>
+                <input type="number" step="any" id="current_comments" name="current_comments" value="{{ video_data.current_comments or '' }}" required>
+            </div>
+
+            <div class="input-group">
+                <h3 class="group-title">Previous 5 Video Views</h3>
+                {% for i in range(1,6) %}
+                    <label for="view{{ i }}">Video {{ i }} Views:</label>
+                    <input type="number" step="any" id="view{{ i }}" name="view{{ i }}" value="{{ video_data.prev_views[loop.index0] or '' }}" required>
+                    {% if not loop.last %}<br><br>{% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="input-group">
+                <h3 class="group-title">Previous 5 Video Likes</h3>
+                {% for i in range(1,6) %}
+                    <label for="like{{ i }}">Video {{ i }} Likes:</label>
+                    <input type="number" step="any" id="like{{ i }}" name="like{{ i }}" value="{{ video_data.prev_likes[loop.index0] or '' }}" required>
+                    {% if not loop.last %}<br><br>{% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="input-group">
+                <h3 class="group-title">Previous 5 Video Comments</h3>
+                {% for i in range(1,6) %}
+                    <label for="comment{{ i }}">Video {{ i }} Comments:</label>
+                    <input type="number" step="any" id="comment{{ i }}" name="comment{{ i }}" value="{{ video_data.prev_comments[loop.index0] or '' }}" required>
+                    {% if not loop.last %}<br><br>{% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="input-group">
+                <h3 class="group-title">Days Since Uploads</h3>
+                 {% for i in range(1,6) %}
+                    <label for="days{{ i }}">Video {{ i }} Days Ago:</label>
+                    <input type="number" step="any" id="days{{ i }}" name="days{{ i }}" value="{{ video_data.prev_days[loop.index0] or '' }}" required>
+                    {% if not loop.last %}<br><br>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" name="action" value="predict" class="predict-button">Predict Trending Score</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result">
+        <strong>Predicted Trending Score:</strong> {{ prediction }}
+    </div>
+    {% endif %}
+</div>

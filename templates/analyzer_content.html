@@ -1,0 +1,46 @@
+<div class="form-card">
+    <h1>Trending Video Analyzer</h1>
+    <form method="POST" id="analyzer-form">
+        <label for="region">Region Code:</label>
+        <select name="region" id="region">
+            <option value="IN" {% if form_data.region == 'IN' %}selected{% endif %}>India</option>
+            <option value="US" {% if form_data.region == 'US' %}selected{% endif %}>United States</option>
+            <option value="GB" {% if form_data.region == 'GB' %}selected{% endif %}>United Kingdom</option>
+        </select>
+
+        <label for="count">Number of Videos:</label>
+        <input type="number" name="count" id="count" value="{{ form_data.count or 5 }}" required>
+
+        <label for="category">Category:</label>
+        <select name="category" id="category">
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if form_data.category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Fetch Trending Videos</button>
+    </form>
+</div>
+
+{% if result %}
+<div class="results-card">
+    <h2>Analysis Results</h2>
+    {% for video in result %}
+        <div class="video-block">
+            <b>Title:</b> {{ video.title }}<br>
+            <b>Channel:</b> {{ video.channelTitle }}<br>
+            <b>Views:</b> {{ "{:,}".format(video.viewCount) }}<br>
+            <b>Summary:</b> {{ video.summary or '(No summary available)' }}<br>
+        </div>
+    {% endfor %}
+
+    <div class="summary-card">
+        <h3>📌 Overall Topic Summary</h3>
+        <p>{{ topic_summary }}</p>
+    </div>
+</div>
+{% elif topic_summary %}
+    <div class="results-card">
+        <p>{{ topic_summary }}</p>
+    </div>
+{% endif %}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trending Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CORRECTED LINK -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape-blue"></div><div class="shape-blue"></div><div class="shape-blue"></div>
+        <div class="shape-blue"></div><div class="shape-blue"></div><div class="shape-blue"></div>
+        <div class="shape-blue"></div><div class="shape-blue"></div><div class="shape-blue"></div>
+        <div class="shape-blue"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-title">Trending Analyzer <span>by IIITDMJ</span></div>
+        <div class="header-controls">
+            <div class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <label for="theme-toggle"></label>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <a href="{{ url_for('analyzer') }}" class="tab-link active">Trending Analyzer</a>
+            <a href="{{ url_for('manual') }}" class="tab-link">Manual Predictor</a>
+        </div>
+
+        <div class="form-card">
+            <h1>Trending Video Analyzer</h1>
+            <form method="POST">
+                <label for="region">Region Code:</label>
+                <select name="region" id="region">
+                    <option value="IN" {% if form_data.region == 'IN' %}selected{% endif %}>India</option>
+                    <option value="US" {% if form_data.region == 'US' %}selected{% endif %}>United States</option>
+                    <option value="GB" {% if form_data.region == 'GB' %}selected{% endif %}>United Kingdom</option>
+                </select>
+
+                <label for="count">Number of Videos:</label>
+                <input type="number" name="count" id="count" value="{{ form_data.count }}" required>
+
+                <label for="category">Category:</label>
+                <select name="category" id="category">
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if form_data.category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Fetch Trending Videos</button>
+            </form>
+        </div>
+
+        {% if result %}
+            <div class="results-card">
+                <h2>Analysis Results</h2>
+                {% for video in result %}
+                    <div class="video-block">
+                        <b>Title:</b> {{ video.title }}<br>
+                        <b>Channel:</b> {{ video.channelTitle }}<br>
+                        <b>Views:</b> {{ "{:,}".format(video.viewCount) }}<br>
+                        <b>Summary:</b> {{ video.summary }}<br>
+                    </div>
+                {% endfor %}
+
+                <div class="summary-card">
+                    <h3>📌 Overall Topic Summary</h3>
+                    <p>{{ topic_summary }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+<script>
+    // JavaScript remains the same
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-theme');
+                themeToggle.checked = false;
+            }
+        };
+
+        const currentTheme = localStorage.getItem('theme');
+        applyTheme(currentTheme);
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
