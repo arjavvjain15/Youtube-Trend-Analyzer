@@ -5,15 +5,60 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- CORRECTED LINK -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* The CSS is identical, but targets .shape-green instead of .shape-blue */
+        .shape-green {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* overflow is removed to prevent clipping */
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .youtube-icon-svg {
+            /* 1. Base size is 100% of the parent rectangle */
+            width: 100%;
+            height: 100%;
+            padding: 0.5em; /* Adds a small margin inside the icon's own space */
+            box-sizing: border-box;
+
+            fill: #FF0000;
+            position: absolute;
+
+            /* 2. Initial state for the animation */
+            opacity: 0;
+            transform: scale(0.5); /* Start scaled down */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* On hover, hide the rectangle's background */
+        .shape-green:hover {
+            background-color: transparent !important;
+        }
+
+        /* On hover, trigger the icon's animation */
+        .shape-green:hover .youtube-icon-svg {
+            /* 3. Final state: visible and scaled 1.5x larger than the rectangle */
+            opacity: 1;
+            transform: scale(1.5);
+        }
+    </style>
 </head>
 <body>
     <div class="background-shapes">
-        <div class="shape-green"></div><div class="shape-green"></div><div class="shape-green"></div>
-        <div class="shape-green"></div><div class="shape-green"></div><div class="shape-green"></div>
-        <div class="shape-green"></div><div class="shape-green"></div><div class="shape-green"></div>
-        <div class="shape-green"></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
+        <div class="shape-green"><svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg></div>
     </div>
     <div class="header">
         <div class="header-title">Trending Analyzer <span>by IIITDMJ</span></div>

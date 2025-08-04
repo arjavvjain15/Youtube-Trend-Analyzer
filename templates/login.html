@@ -1,40 +1,150 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Trending Analyzer</title>
+    <title>Trending Analyzer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- CORRECTED LINK -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .shape-blue {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Add a transition for the background color to fade out smoothly */
+            transition: background-color 0.3s ease-in-out;
+            /* PADDING REMOVED: This was the line causing the icon to be cut. */
+        }
+
+        .youtube-icon-svg {
+            /* The SVG will now scale to fill the container */
+            width: 100%;
+            height: 100%;
+            fill: #FF0000; /* Use 'fill' to color SVGs */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            position: absolute;
+            padding: 1em; /* Padding is now applied to the SVG itself */
+            box-sizing: border-box; /* Ensures padding is included in the element's total size */
+
+        }
+
+        /* On hover, make the rectangle's background transparent */
+        .shape-blue:hover {
+            background-color: transparent !important;
+        }
+
+        /* On hover, make the SVG icon visible */
+        .shape-blue:hover .youtube-icon-svg {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body class="login-page-body">
+<body>
     <div class="background-shapes">
-        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
-        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
-        <div class="shape-light"></div><div class="shape-light"></div><div class="shape-light"></div>
-        <div class="shape-light"></div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
+        <div class="shape-blue">
+            <svg class="youtube-icon-svg" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg"><path d="M27.46 3.033c-.32-1.22-.727-2.006-1.28-2.45C25.123.023 23.96 0 22.4 0H5.6C4.04 0 2.877.023 1.82.583c-.553.444-.96 1.23-1.28 2.45C0 4.293 0 6.653 0 10s0 5.707.54 6.967c.32 1.22.727 2.006 1.28 2.45C2.877 19.977 4.04 20 5.6 20h16.8c1.56 0 2.723-.023 3.78-.583.553-.444.96-1.23 1.28-2.45C28 15.707 28 13.347 28 10s0-5.707-.54-6.967zM11.2 14V6l8.4 4-8.4 4z"/></svg>
+        </div>
     </div>
 
-    <div class="login-container">
-        <div class="theme-switcher">
-            <input type="checkbox" id="theme-toggle">
-            <label for="theme-toggle"></label>
+    <div class="header">
+        <div class="header-title">Trending Analyzer <span>by IIITDMJ</span></div>
+        <div class="header-controls">
+            <div class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <label for="theme-toggle"></label>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
         </div>
-        <h2>Trending Analyzer Login</h2>
-        <form method="POST">
-            <div class="input-group">
-                <input type="text" name="username" placeholder="Username" required>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <a href="{{ url_for('analyzer') }}" class="tab-link active">Trending Analyzer</a>
+            <a href="{{ url_for('manual') }}" class="tab-link">Manual Predictor</a>
+        </div>
+
+        <div class="form-card">
+            <h1>Trending Video Analyzer</h1>
+            <form method="POST">
+                <label for="region">Region Code:</label>
+                <select name="region" id="region">
+                    <option value="IN" {% if form_data.region == 'IN' %}selected{% endif %}>India</option>
+                    <option value="US" {% if form_data.region == 'US' %}selected{% endif %}>United States</option>
+                    <option value="GB" {% if form_data.region == 'GB' %}selected{% endif %}>United Kingdom</option>
+                </select>
+
+                <label for="count">Number of Videos:</label>
+                <input type="number" name="count" id="count" value="{{ form_data.count }}" required>
+
+                <label for="category">Category:</label>
+                <select name="category" id="category">
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if form_data.category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Fetch Trending Videos</button>
+            </form>
+        </div>
+
+        {% if result %}
+    <div class="results-card">
+        <h2>Analysis Results</h2>
+        {% for video in result %}
+            <div class="video-block">
+                <div class="video-info">
+                    <b>Title:</b> {{ video.title }}<br>
+                    <b>Channel:</b> {{ video.channelTitle }}<br>
+                    <b>Views:</b> {{ "{:,}".format(video.viewCount) }}<br>
+                    <b>Summary:</b> {{ video.summary }}<br>
+                </div>
+                <div class="video-embed">
+                    <iframe width="300" height="170"
+                            src="https://www.youtube.com/embed/{{ video.videoId }}"
+                            frameborder="0"
+                            allowfullscreen></iframe>
+                </div>
             </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit">Login</button>
-            {% if error %}
-                <p class="error">{{ error }}</p>
-            {% endif %}
-        </form>
-        <p class="footer-text">Developed by IIITDMJ</p>
+        {% endfor %}
+
+        <div class="summary-card">
+            <h3>📌 Overall Topic Summary</h3>
+            <p>{{ topic_summary }}</p>
+        </div>
+    </div>
+{% endif %}
+
     </div>
 
 <script>

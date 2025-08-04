@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd
+import numpy as np
 from googleapiclient.discovery import build
 import joblib
 import os
@@ -21,16 +22,27 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 # --- API & Model Setup ---
-# It's recommended to use environment variables for API keys in production
-API_KEY = os.environ.get('YOUTUBE_API_KEY', 'AIzaSyC4ZwDopoXxUEMWjUCjrnKO7yCQ4ZcB5Gw') # Replace with your key if not set as env var
+API_KEY = os.environ.get('YOUTUBE_API_KEY', 'AIzaSyC4ZwDopoXxUEMWjUCjrnKO7yCQ4ZcB5Gw')
 youtube = build("youtube", "v3", developerKey=API_KEY)
-model = joblib.load("predictive_view_model.pkl")
+# **FIX**: Load the correct advanced model file
+model = joblib.load("predictive_view_modelGBR.pkl")
 
 CATEGORY_MAP = {
-    "All": None, "Film & Animation": "1", "Autos & Vehicles": "2", "Music": "10",
-    "Pets & Animals": "15", "Sports": "17", "Short Movies": "18", "Travel & Events": "19",
-    "Gaming": "20", "People & Blogs": "22", "Comedy": "23", "Entertainment": "24",
-    "News & Politics": "25", "Howto & Style": "26", "Education": "27", "Science & Technology": "28"
+    "All": None,
+    "Autos & Vehicles": "2",
+    "Comedy": "23",
+    "Education": "27",
+    "Entertainment": "24",
+    "Film & Animation": "1",
+    "Gaming": "20",
+    "Howto & Style": "26",
+    "Music": "10",
+    "News & Politics": "25",
+    "People & Blogs": "22",
+    "Pets & Animals": "15",
+    "Science & Technology": "28",
+    "Sports": "17",
+    "Travel & Events": "19"
 }
 
 # ============ HELPER FUNCTIONS ============
@@ -95,7 +107,12 @@ def calculate_days_since(published_at_string):
     published_date = parser.isoparse(published_at_string)
     now = datetime.now(timezone.utc)
     delta = now - published_date
-    return delta.days
+    days_passed = delta.days
+    
+    # If the video was published less than a full day ago, count it as 1.
+    if days_passed <= 0:
+        return 1
+    return days_passed
 
 def safe_summarize(text):
     try:
@@ -117,6 +134,7 @@ def get_trending_videos(region_code='IN', max_results=5, category_id=None):
             snippet = item['snippet']
             stats = item['statistics']
             videos.append({
+                'videoId': item['id'],  # <- NEW: Include video ID for embedding
                 'title': snippet.get('title', 'N/A'),
                 'description': snippet.get('description', ''),
                 'channelTitle': snippet.get('channelTitle', 'N/A'),
@@ -128,6 +146,15 @@ def get_trending_videos(region_code='IN', max_results=5, category_id=None):
     except Exception as e:
         print(f"An error occurred while fetching YouTube videos: {e}")
         return pd.DataFrame()
+
+
+def calculate_dynamic_weights(ages):
+    """Calculates weights for the 5 previous videos based on their age."""
+    raw_weights = [1 / (age + 1) for age in ages]
+    sum_of_weights = sum(raw_weights)
+    if sum_of_weights == 0:
+        return [0.2] * 5
+    return [w / sum_of_weights for w in raw_weights]
 
 # ============ ROUTES ============ #
 
@@ -143,7 +170,6 @@ def login():
     if 'user' in session:
         return redirect(url_for('analyzer'))
     if request.method == 'POST':
-        # Using simple user/pass for demo. Use a proper auth system for production.
         if request.form['username'] == 'admin' and request.form['password'] == 'password':
             session['user'] = request.form['username']
             return redirect(url_for('analyzer'))
@@ -163,12 +189,7 @@ def analyzer():
 
     result = []
     topic_summary = ''
-    # Set default form data for GET request
-    form_data = {
-        'region': 'IN',
-        'count': 5,
-        'category': 'All'
-    }
+    form_data = {'region': 'IN', 'count': 5, 'category': 'All'}
 
     if request.method == 'POST':
         form_data['region'] = request.form.get('region', 'IN')
@@ -176,7 +197,6 @@ def analyzer():
         form_data['category'] = request.form.get('category', 'All')
         
         category_id = CATEGORY_MAP.get(form_data['category'])
-        
         try:
             count = int(form_data['count'])
         except (ValueError, TypeError):
@@ -232,18 +252,11 @@ def manual():
                     prev_video_ids = get_channel_uploads(channel_id, video_id)
                     prev_video_details = get_video_details(prev_video_ids)
 
-                    # Reset lists before populating
-                    video_data.update({
-                        'prev_views': [], 'prev_likes': [], 'prev_comments': [], 'prev_days': []
-                    })
-                    for video in prev_video_details:
-                        prev_stats = video.get('statistics', {})
-                        video_data['prev_views'].append(int(prev_stats.get('viewCount', 0)))
-                        video_data['prev_likes'].append(int(prev_stats.get('likeCount', 0)))
-                        video_data['prev_comments'].append(int(prev_stats.get('commentCount', 0)))
-                        video_data['prev_days'].append(calculate_days_since(video['snippet'].get('publishedAt')))
-                    
-                    # Pad with 0 if fewer than 5 videos were found
+                    video_data['prev_views'] = [int(v.get('statistics', {}).get('viewCount', 0)) for v in prev_video_details]
+                    video_data['prev_likes'] = [int(v.get('statistics', {}).get('likeCount', 0)) for v in prev_video_details]
+                    video_data['prev_comments'] = [int(v.get('statistics', {}).get('commentCount', 0)) for v in prev_video_details]
+                    video_data['prev_days'] = [calculate_days_since(v['snippet'].get('publishedAt')) for v in prev_video_details]
+
                     while len(video_data['prev_views']) < 5:
                         video_data['prev_views'].append(0)
                         video_data['prev_likes'].append(0)
@@ -252,60 +265,73 @@ def manual():
 
         elif action == 'predict':
             try:
-                input_data = {
-                    'current_views': float(request.form['current_views']),
-                    'current_comments': float(request.form['current_comments']),
-                    'current_likes': float(request.form['current_likes']),
-                }
-                for i in range(1, 6):
-                    input_data[f'views_{i}'] = float(request.form[f'view{i}'])
-                    input_data[f'likes_{i}'] = float(request.form[f'like{i}'])
-                    input_data[f'comments_{i}'] = float(request.form[f'comment{i}'])
-                    input_data[f'days_since_upload_{i}'] = float(request.form[f'days{i}'])
+                # 1. Get all raw data from the form, defaulting empty fields to 0.
+                current_views = float(request.form.get('current_views') or 0)
+                current_likes = float(request.form.get('current_likes') or 0)
+                current_comments = float(request.form.get('current_comments') or 0)
 
-                expected_feature_order = [
-                    'current_views', 'current_comments', 'current_likes',
-                    'views_1', 'views_2', 'views_3', 'views_4', 'views_5',
-                    'likes_1', 'likes_2', 'likes_3', 'likes_4', 'likes_5',
-                    'comments_1', 'comments_2', 'comments_3', 'comments_4', 'comments_5',
-                    'days_since_upload_1', 'days_since_upload_2', 'days_since_upload_3',
-                    'days_since_upload_4', 'days_since_upload_5'
-                ]
-                
-                input_df = pd.DataFrame([input_data])
-                input_df_ordered = input_df[expected_feature_order]
+                prev_views = [float(request.form.get(f'view{i}') or 0) for i in range(1, 6)]
+                prev_likes = [float(request.form.get(f'like{i}') or 0) for i in range(1, 6)]
+                prev_comments = [float(request.form.get(f'comment{i}') or 0) for i in range(1, 6)]
+                prev_days = [float(request.form.get(f'days{i}') or 0) for i in range(1, 6)]
 
-                prediction_value = model.predict(input_df_ordered)[0]
-                prediction = f"{prediction_value:,.2f}"
+                # 2. Perform advanced feature engineering
+                dynamic_weights = calculate_dynamic_weights(prev_days)
                 
-                # **FIX:** Keep the form data populated after prediction
+                weighted_views = np.dot(prev_views, dynamic_weights)
+                weighted_likes = np.dot(prev_likes, dynamic_weights)
+                weighted_comments = np.dot(prev_comments, dynamic_weights)
+                
+                # **FIX**: Calculate the ratio features that the advanced model expects
+                likes_per_view_ratio = current_likes / (current_views + 1)
+                comments_per_view_ratio = current_comments / (current_views + 1)
+
+                # 3. Assemble the final features and APPLY LOG TRANSFORMATION
+                final_features = pd.DataFrame([{
+                    'current_views': np.log1p(current_views),
+                    'current_comments': np.log1p(current_comments),
+                    'current_likes': np.log1p(current_likes),
+                    'weighted_prev_views': np.log1p(weighted_views),
+                    'weighted_prev_likes': np.log1p(weighted_likes),
+                    'weighted_prev_comments': np.log1p(weighted_comments),
+                    'likes_per_view_ratio': np.log1p(likes_per_view_ratio),
+                    'comments_per_view_ratio': np.log1p(comments_per_view_ratio)
+                }])
+
+                # 4. Predict using the loaded model
+                prediction_log = model.predict(final_features)[0]
+                
+                # 5. INVERSE TRANSFORM the prediction to get the actual view count
+                prediction_value = np.expm1(prediction_log)
+                
+                # 6. Ensure prediction is not less than current views
+                if(prediction_value<current_views): prediction_value=current_views+prediction_value
+                final_prediction = max(prediction_value, current_views)
+                prediction = f"{final_prediction:,.0f}"
+
+                # 7. Keep form populated with the ORIGINAL data the user submitted
                 video_data = {
-                    'current_views': request.form['current_views'],
-                    'current_likes': request.form['current_likes'],
-                    'current_comments': request.form['current_comments'],
-                    'prev_views': [request.form.get(f'view{i}') for i in range(1,6)],
-                    'prev_likes': [request.form.get(f'like{i}') for i in range(1,6)],
-                    'prev_comments': [request.form.get(f'comment{i}') for i in range(1,6)],
-                    'prev_days': [request.form.get(f'days{i}') for i in range(1,6)],
+                    'current_views': current_views,
+                    'current_likes': current_likes,
+                    'current_comments': current_comments,
+                    'prev_views': prev_views,
+                    'prev_likes': prev_likes,
+                    'prev_comments': prev_comments,
+                    'prev_days': prev_days,
                 }
 
             except Exception as e:
                 error = f"Error during prediction: {str(e)}"
-                # Keep user-entered data on error
-                video_data = {
-                    'current_views': request.form.get('current_views', ''),
-                    'current_likes': request.form.get('current_likes', ''),
-                    'current_comments': request.form.get('current_comments', ''),
-                    'prev_views': [request.form.get(f'view{i}', '') for i in range(1,6)],
-                    'prev_likes': [request.form.get(f'like{i}', '') for i in range(1,6)],
-                    'prev_comments': [request.form.get(f'comment{i}', '') for i in range(1,6)],
-                    'prev_days': [request.form.get(f'days{i}', '') for i in range(1,6)],
-                }
-
+                video_data['current_views'] = request.form.get('current_views', '')
+                video_data['current_likes'] = request.form.get('current_likes', '')
+                video_data['current_comments'] = request.form.get('current_comments', '')
+                video_data['prev_views'] = [request.form.get(f'view{i}', '') for i in range(1, 6)]
+                video_data['prev_likes'] = [request.form.get(f'like{i}', '') for i in range(1, 6)]
+                video_data['prev_comments'] = [request.form.get(f'comment{i}', '') for i in range(1, 6)]
+                video_data['prev_days'] = [request.form.get(f'days{i}', '') for i in range(1, 6)]
 
     return render_template("manual.html", prediction=prediction, video_data=video_data, error=error)
 
 # ============ MAIN ============ #
 if __name__ == '__main__':
-    # Use debug=False in a production environment
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -6,7 +6,7 @@ import re
 local_model_path = "./distilbart-cnn-dailymail-finetuned"
 try:
     # Using device=-1 ensures it runs on CPU, which is more compatible for general use.
-    summarizer = pipeline("summarization", model=local_model_path, device=0)
+    summarizer = pipeline("summarization", model=local_model_path, device=-1)
 except Exception as e:
     summarizer = None
     print(f"CRITICAL: Could not load the summarization model from '{local_model_path}'. Error: {e}")
