@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 # --- API & Model Setup ---
-API_KEY = os.environ.get('YOUTUBE_API_KEY', 'AIzaSyC4ZwDopoXxUEMWjUCjrnKO7yCQ4ZcB5Gw')
+API_KEY = os.environ.get('YOUTUBE_API_KEY', 'AIzaSyC4ZwDopo_________Q4ZcB5Gw')
 youtube = build("youtube", "v3", developerKey=API_KEY)
 # **FIX**: Load the correct advanced model file
 model = joblib.load("predictive_view_modelGBR.pkl")
